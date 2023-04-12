@@ -1,4 +1,6 @@
 using System;
+using System.Runtime;
+using System.Text;
 using System.Windows.Forms;
 
 namespace Complex
@@ -81,8 +83,51 @@ namespace Complex
         {
             var leftList = dataGridView1.Rows.Cast<DataGridViewRow>().Select(row => row.Cells[0].Value?.ToString()).ToList(); 
             var rightList = dataGridView1.Rows.Cast<DataGridViewRow>().Select(row => row.Cells[1].Value?.ToString()).ToList();
-            
+            var joinList = new List<string?[]>();
+            for (int i =0; i<leftList.Count()-1; i++) 
+            {
+                if (leftList[i] != null && rightList[i]!=null)
+                {
+                    joinList.Add(new string[] { leftList[i], rightList[i] });
+                }
+            }
+            foreach(var joins in joinList)
+            {
+                foreach(var str in joins)
+                {
+                    MessageBox.Show(str);
+                }
+            }
 
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            using (StreamWriter sw = new StreamWriter("data.txt"))
+            {
+                foreach (DataGridViewRow row in dataGridView1.Rows)
+                {
+                    StringBuilder sb = new StringBuilder();
+                    for (int i = 0; i < row.Cells.Count-1; i++)
+                    {
+                        sb.Append(row.Cells[i].Value?.ToString() + ",");
+                    }
+                    sw.WriteLine(sb.ToString().TrimEnd(','));
+                }
+            }
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            using (StreamReader sr = new StreamReader("data.txt"))
+            {
+                string line;
+                while ((line = sr.ReadLine()) != null)
+                {
+                    string[] values = line.Split(',');
+                    dataGridView1.Rows.Add(values);
+                }
+            }
         }
     }
 }
