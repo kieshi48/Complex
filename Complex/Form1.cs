@@ -40,10 +40,10 @@ namespace Complex
         {
             try
             {
-                if (fileList.Count==0) throw new Exception("Please, select directory with Word files");
+                if (fileList.Count == 0) throw new Exception("Please, select directory with Word files");
 
                 var wordList = from files in fileList where (files.EndsWith(".docx") || files.EndsWith(".doc")) select files;
-                
+
                 if (wordList.Count() == 0) throw new Exception("Please, select directory with Word files");
 
                 MessageBox.Show("Conversion procedure started");
@@ -62,12 +62,24 @@ namespace Complex
             }
             finally
             {
-                if (exceptions is false) 
+                if (exceptions is false)
                 {
                     MessageBox.Show("All Word documents in the folder have been converted to PDF.");
                 }
             }
         }
 
+        private void dataGridView1_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            var leftList = dataGridView1.Rows.Cast<DataGridViewRow>().Select(row => row.Cells[0].Value?.ToString()).ToList(); 
+            var rightList = dataGridView1.Rows.Cast<DataGridViewRow>().Select(row => row.Cells[1].Value?.ToString()).ToList();
+            
+
+        }
     }
 }

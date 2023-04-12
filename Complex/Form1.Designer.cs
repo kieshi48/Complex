@@ -57,6 +57,7 @@
             button2.TabIndex = 1;
             button2.Text = "Bulk change rows in Word and Excel";
             button2.UseVisualStyleBackColor = true;
+            button2.Click += button2_Click;
             // 
             // textBox1
             // 
@@ -78,6 +79,7 @@
             dataGridView1.Size = new Size(681, 123);
             dataGridView1.TabIndex = 3;
             dataGridView1.CellContentClick += dataGridView1_CellContentClick;
+            dataGridView1.CellValueChanged += dataGridView1_CellValueChanged;
             // 
             // WhatEdit
             // 
