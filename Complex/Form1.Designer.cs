@@ -108,6 +108,7 @@
             button3.TabIndex = 5;
             button3.Text = "Bulk convert from Word to PDF";
             button3.UseVisualStyleBackColor = true;
+            button3.Click += button3_Click;
             // 
             // Form1
             // 
