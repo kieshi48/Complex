@@ -71,6 +71,7 @@ namespace Complex
                 {
                     MessageBox.Show("All Word documents in the folder have been converted to PDF.");
                 }
+                exceptions = false;
             }
         }
 
@@ -81,22 +82,40 @@ namespace Complex
 
         private void button2_Click_1(object sender, EventArgs e)
         {
-            var leftList = dataGridView1.Rows.Cast<DataGridViewRow>().Select(row => row.Cells[0].Value?.ToString()).ToList();
-            var rightList = dataGridView1.Rows.Cast<DataGridViewRow>().Select(row => row.Cells[1].Value?.ToString()).ToList();
-            var joinList = new List<string?[]>();
-            for (int i = 0; i < leftList.Count() - 1; i++)
-            {
-                if (leftList[i] != null && rightList[i] != null)
+            try 
+            { 
+                var leftList = dataGridView1.Rows.Cast<DataGridViewRow>().Select(row => row.Cells[0].Value?.ToString()).ToList();
+                var rightList = dataGridView1.Rows.Cast<DataGridViewRow>().Select(row => row.Cells[1].Value?.ToString()).ToList();
+                var joinList = new List<string?[]>();
+                for (int i = 0; i < leftList.Count() - 1; i++)
                 {
-                    joinList.Add(new string[] { leftList[i], rightList[i] });
+                    if (leftList[i] != null && rightList[i] != null)
+                    {
+                        joinList.Add(new string[] { leftList[i], rightList[i] });
+                    }
                 }
+
+                if (fileList.Count == 0) throw new Exception("Please, select directory with Word files");
+
+                var wordList = from files in fileList where (files.EndsWith(".docx") || files.EndsWith(".doc")) select files;
+                var excelList = from files in fileList where (files.EndsWith(".xlsx") || files.EndsWith(".xls")) select files;
+                var chenger = new BulkChenger();
+                var wordChengeTask = chenger.WordChanger(wordList, joinList);
+                var excelChengeTask = chenger.WordChanger(wordList, joinList);
+
             }
-            foreach (var joins in joinList)
+            catch (Exception ex)
             {
-                foreach (var str in joins)
+                MessageBox.Show(ex.Message);
+                exceptions = true;
+            }
+            finally
+            {
+                if (exceptions is false)
                 {
-                    MessageBox.Show(str);
+                    MessageBox.Show("Something went wrong");
                 }
+                exceptions = false;
             }
 
         }
