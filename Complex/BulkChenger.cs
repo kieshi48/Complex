@@ -11,25 +11,27 @@ namespace Complex
     internal class BulkChenger
     {
 
-        public async Task WordChanger(List<string> wordList, List<string[]> chnges)
+        public async Task WordChanger(IEnumerable<string> wordList, List<string?[]> changes)
         {
             await Task.Delay(1000);
             foreach (var word in wordList) 
             {
                 Word.Application wordApplication = new Word.Application();
                 Word.Document wordDocument = wordApplication.Documents.Open(word);
-
-                // Заменяем строку один на строку два
-                wordDocument.Content.Find.Execute("Один", ReplaceWith: "Два");
-
+                foreach (var chn in changes)
+                {
+                    // Заменяем строку один на строку два
+                    wordDocument.Content.Find.Execute(chn[0], ReplaceWith: chn[1]);
+                }                
                 // Сохраняем и закрываем документ
                 wordDocument.Save();
                 wordDocument.Close();
                 wordApplication.Quit();
+                
             }
         }
 
-        public async Task ExcelChanger(List<string> excelList, List<string[]> chnges)
+        public async Task ExcelChanger(IEnumerable<string> excelList, List<string?[]> changes)
         {
             await Task.Delay(1000);
             foreach(var excel in excelList)
@@ -38,19 +40,25 @@ namespace Complex
                 Excel.Workbook excelWorkbook = excelApplication.Workbooks.Open(excel);
                 Excel.Worksheet excelWorksheet = excelWorkbook.ActiveSheet;
 
-                // Заменяем строку один на строку два
+
                 Excel.Range range = excelWorksheet.UsedRange;
                 object[,] values = range.Value;
-                for (int i = 1; i <= values.GetLength(0); i++)
+
+                // Заменяем строку один на строку два
+                foreach (var chn in changes)
                 {
-                    for (int j = 1; j <= values.GetLength(1); j++)
+                    for (int i = 1; i <= values.GetLength(0); i++)
                     {
-                        if (values[i, j].ToString() == "Один")
+                        for (int j = 1; j <= values.GetLength(1); j++)
                         {
-                            values[i, j] = "Два";
+                            if (values[i, j].ToString() == chn[0])
+                            {
+                                values[i, j] = chn[1];
+                            }
                         }
                     }
                 }
+               
                 range.Value = values;
 
                 // Сохраняем и закрываем документ
