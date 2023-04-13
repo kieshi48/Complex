@@ -29,6 +29,7 @@ namespace Complex
                 wordApplication.Quit();
                 
             }
+            MessageBox.Show("Word changes completed");
         }
 
         public async Task ExcelChanger(IEnumerable<string> excelList, List<string?[]> changes)
@@ -39,34 +40,46 @@ namespace Complex
                 Excel.Application excelApplication = new Excel.Application();
                 Excel.Workbook excelWorkbook = excelApplication.Workbooks.Open(excel);
                 Excel.Worksheet excelWorksheet = excelWorkbook.ActiveSheet;
-
-
-                Excel.Range range = excelWorksheet.UsedRange;
-                object[,] values = range.Value;
-
-                // Заменяем строку один на строку два
-                foreach (var chn in changes)
+                try
                 {
-                    for (int i = 1; i <= values.GetLength(0); i++)
+                    Excel.Range range = excelWorksheet.UsedRange;
+                    object[,] values = range.Value;
+                    
+                    // Заменяем строку один на строку два
+                    foreach (var chn in changes)
                     {
-                        for (int j = 1; j <= values.GetLength(1); j++)
+                        for (int i = 1; i <= values.GetLength(0); i++)
                         {
-                            if (values[i, j].ToString() == chn[0])
+                            for (int j = 1; j <= values.GetLength(1); j++)
                             {
-                                values[i, j] = chn[1];
+                                if (values[i,j] is not null) 
+                                {
+                                    if (values[i, j].ToString() == chn[0])
+                                    {
+                                        values[i, j] = chn[1].ToString();
+                                    }
+                                }
                             }
                         }
                     }
+
+                    range.Value = values;
+
+                    // Сохраняем и закрываем документ
+                    excelWorkbook.Save();
+                    excelWorkbook.Close();
+                    excelApplication.Quit();
                 }
-               
-                range.Value = values;
 
-                // Сохраняем и закрываем документ
-                excelWorkbook.Save();
-                excelWorkbook.Close();
-                excelApplication.Quit();
+                catch
+                {
+                    excelWorkbook.Save();
+                    excelWorkbook.Close();
+                    excelApplication.Quit();
+                }
+                
             }
-
+            MessageBox.Show("Excel changes completed");
         }
 
     }

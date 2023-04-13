@@ -83,7 +83,12 @@ namespace Complex
         private void button2_Click_1(object sender, EventArgs e)
         {
             try 
-            { 
+            {
+                if (fileList.Count == 0) throw new Exception("Please, select directory with Word files");
+
+                MessageBox.Show("Change operation started");
+
+                exceptions = false;
                 var leftList = dataGridView1.Rows.Cast<DataGridViewRow>().Select(row => row.Cells[0].Value?.ToString()).ToList();
                 var rightList = dataGridView1.Rows.Cast<DataGridViewRow>().Select(row => row.Cells[1].Value?.ToString()).ToList();
                 var joinList = new List<string?[]>();
@@ -95,13 +100,11 @@ namespace Complex
                     }
                 }
 
-                if (fileList.Count == 0) throw new Exception("Please, select directory with Word files");
-
                 var wordList = from files in fileList where (files.EndsWith(".docx") || files.EndsWith(".doc")) select files;
                 var excelList = from files in fileList where (files.EndsWith(".xlsx") || files.EndsWith(".xls")) select files;
                 var chenger = new BulkChenger();
                 var wordChengeTask = chenger.WordChanger(wordList, joinList);
-                var excelChengeTask = chenger.WordChanger(wordList, joinList);
+                var excelChengeTask = chenger.ExcelChanger(excelList, joinList);
 
             }
             catch (Exception ex)
@@ -111,7 +114,7 @@ namespace Complex
             }
             finally
             {
-                if (exceptions is false)
+                if (exceptions is true)
                 {
                     MessageBox.Show("Something went wrong");
                 }
