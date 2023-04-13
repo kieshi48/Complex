@@ -17,7 +17,7 @@ namespace Complex
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.ColumnIndex == dataGridView1.Columns["Delete"].Index)
+            if (e.ColumnIndex == dataGridView1.Columns["Delete"].Index && dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value != null)
             {
                 dataGridView1.Rows.RemoveAt(e.RowIndex);
             }
@@ -81,19 +81,19 @@ namespace Complex
 
         private void button2_Click_1(object sender, EventArgs e)
         {
-            var leftList = dataGridView1.Rows.Cast<DataGridViewRow>().Select(row => row.Cells[0].Value?.ToString()).ToList(); 
+            var leftList = dataGridView1.Rows.Cast<DataGridViewRow>().Select(row => row.Cells[0].Value?.ToString()).ToList();
             var rightList = dataGridView1.Rows.Cast<DataGridViewRow>().Select(row => row.Cells[1].Value?.ToString()).ToList();
             var joinList = new List<string?[]>();
-            for (int i =0; i<leftList.Count()-1; i++) 
+            for (int i = 0; i < leftList.Count() - 1; i++)
             {
-                if (leftList[i] != null && rightList[i]!=null)
+                if (leftList[i] != null && rightList[i] != null)
                 {
                     joinList.Add(new string[] { leftList[i], rightList[i] });
                 }
             }
-            foreach(var joins in joinList)
+            foreach (var joins in joinList)
             {
-                foreach(var str in joins)
+                foreach (var str in joins)
                 {
                     MessageBox.Show(str);
                 }
@@ -107,27 +107,45 @@ namespace Complex
             {
                 foreach (DataGridViewRow row in dataGridView1.Rows)
                 {
-                    StringBuilder sb = new StringBuilder();
-                    for (int i = 0; i < row.Cells.Count-1; i++)
+                    if (row.Index!=dataGridView1.Rows.Count-1)
                     {
-                        sb.Append(row.Cells[i].Value?.ToString() + ",");
+                        StringBuilder sb = new StringBuilder();
+                        for (int i = 0; i < row.Cells.Count - 1; i++)
+                        {
+                            sb.Append(row.Cells[i].Value?.ToString() + ",");
+                        }
+                        sw.WriteLine(sb.ToString().TrimEnd(','));
                     }
-                    sw.WriteLine(sb.ToString().TrimEnd(','));
                 }
             }
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            using (StreamReader sr = new StreamReader("data.txt"))
+            try
             {
-                string line;
-                while ((line = sr.ReadLine()) != null)
+                using (StreamReader sr = new StreamReader("data.txt"))
                 {
-                    string[] values = line.Split(',');
-                    dataGridView1.Rows.Add(values);
+                    string line;
+                    while ((line = sr.ReadLine()) != null)
+                    {
+                        string[] values = line.Split(',');
+                        dataGridView1.Rows.Add(values);
+                    }
                 }
             }
+            catch (FileNotFoundException)
+            {
+                using (StreamWriter sw = new StreamWriter("data.txt"))
+                {
+                    foreach (DataGridViewRow row in dataGridView1.Rows)
+                    {
+                        StringBuilder sb = new StringBuilder();
+                        sb.Append(",");
+                    }
+                }
+            }
+
         }
     }
 }
