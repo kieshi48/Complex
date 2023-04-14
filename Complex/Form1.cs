@@ -99,13 +99,24 @@ namespace Complex
                         joinList.Add(new string[] { leftList[i], rightList[i] });
                     }
                 }
-
-                var wordList = from files in fileList where (files.EndsWith(".docx") || files.EndsWith(".doc")) select files;
-                var excelList = from files in fileList where (files.EndsWith(".xlsx") || files.EndsWith(".xls")) select files;
-                var chenger = new BulkChenger();
-                var wordChengeTask = chenger.WordChanger(wordList, joinList);
-                var excelChengeTask = chenger.ExcelChanger(excelList, joinList);
-
+                if(joinList.Count>0)
+                {
+                    var wordList = from files in fileList where (files.EndsWith(".docx") || files.EndsWith(".doc")) select files;
+                    var excelList = from files in fileList where (files.EndsWith(".xlsx") || files.EndsWith(".xls")) select files;
+                    var chenger = new BulkChenger();
+                    if (wordList.Count() > 0)
+                    {
+                        var wordChengeTask = chenger.WordChanger(wordList, joinList);
+                    }
+                    if (excelList.Count() > 0)
+                    {
+                        var excelChengeTask = chenger.ExcelChanger(excelList, joinList);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("There are no fields to edit");
+                }
             }
             catch (Exception ex)
             {

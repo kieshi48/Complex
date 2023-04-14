@@ -52,12 +52,9 @@ namespace Complex
                         {
                             for (int j = 1; j <= values.GetLength(1); j++)
                             {
-                                if (values[i,j] is not null) 
+                                if ((values[i, j] ?? "").ToString().Contains(chn[0]))
                                 {
-                                    if (values[i, j].ToString() == chn[0])
-                                    {
-                                        values[i, j] = chn[1].ToString();
-                                    }
+                                    values[i, j] = values[i, j].ToString().Replace(chn[0], chn[1]);
                                 }
                             }
                         }
